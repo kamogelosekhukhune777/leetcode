@@ -19,3 +19,7 @@
 
 # Go workspace file
 go.work
+
+easy/206-reverse-linked-list
+easy/21-merge-two-sorted-lists
+easy\21-merge-two-sorted-lists
