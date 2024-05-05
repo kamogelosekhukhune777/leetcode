@@ -20,6 +20,5 @@
 # Go workspace file
 go.work
 
-easy/26-remove-duplicates-from-sorted-array
 easy/27-remove-element
 easy/977-squares-of-a-sorted-array
