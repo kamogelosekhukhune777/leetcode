@@ -26,7 +26,7 @@ The number of nodes in the list is in the range [1, 100].
 1 <= Node.val <= 100
 */
 
-// definition for singly-linked list
+//definition for singly-linked list
 type ListNode struct {
 	Val  int
 	Next *ListNode
