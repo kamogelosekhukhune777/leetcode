@@ -33,20 +33,25 @@ complexity constraint of O(n) with constant extra space, we can modify the cycli
 slightly. Instead of simply swapping elements to their correct positions, we can identify the duplicate
 numbers during the cyclic sort process. Here's how you can implement this in Go:
 */
-
 func findDuplicates(nums []int) []int {
 	duplicates := []int{}
 
 	// Perform cyclic sort to identify duplicate numbers
 	i := 0
 	for i < len(nums) {
-		if nums[i] != nums[nums[i]-1] {
-			nums[i], nums[nums[i]-1] = nums[nums[i]-1], nums[i]
-		} else if nums[i] != i+1 {
-			duplicates = append(duplicates, nums[i])
+		// Check if the number is in its correct position
+		if nums[i] == i+1 || nums[i] == nums[nums[i]-1] {
 			i++
 		} else {
-			i++
+			// Swap the numbers to move the current number to its correct position
+			nums[nums[i]-1], nums[i] = nums[i], nums[nums[i]-1]
+		}
+	}
+
+	// After cyclic sort, identify duplicates
+	for j := 0; j < len(nums); j++ {
+		if nums[j] != j+1 {
+			duplicates = append(duplicates, nums[j])
 		}
 	}
 
