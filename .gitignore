@@ -19,3 +19,12 @@
 
 # Go workspace file
 go.work
+
+*.txt
+easy/414-third-maximum-number
+easy/350-intersection-of-two-arrays-ii
+easy/448-find-all-numbers-disappeared-in-an-array
+easy/645-set-mismatch
+easy/75-sort-colors
+medium
+hard
