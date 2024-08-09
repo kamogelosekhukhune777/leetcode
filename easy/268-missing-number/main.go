@@ -38,24 +38,18 @@ in the range [0, n], we can use cyclic sort to rearrange the elements and then i
 through the sorted array to identify the missing number. Here's how you can implement this approach in Go:
 
 */
+// Function to find the missing number in the range [0, n]
 func missingNumber(nums []int) int {
-	// Perform cyclic sort to rearrange the elements
-	i := 0
-	for i < len(nums) {
-		if nums[i] < len(nums) && nums[i] != nums[nums[i]] {
-			nums[i], nums[nums[i]] = nums[nums[i]], nums[i]
-		} else {
-			i++
-		}
+	n := len(nums)
+	// Calculate the expected sum of numbers from 0 to n
+	expectedSum := n * (n + 1) / 2
+	// Calculate the actual sum of numbers in the array
+	actualSum := 0
+	for _, num := range nums {
+		actualSum += num
 	}
-	//finding the missing number
-	for i, num := range nums {
-		if num != i {
-			return i
-		}
-	}
-
-	return len(nums)
+	// The missing number is the difference between the expected sum and the actual sum
+	return expectedSum - actualSum
 }
 
 func main() {
