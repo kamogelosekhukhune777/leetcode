@@ -41,15 +41,27 @@ through the sorted array to identify the missing number. Here's how you can impl
 // Function to find the missing number in the range [0, n]
 func missingNumber(nums []int) int {
 	n := len(nums)
-	// Calculate the expected sum of numbers from 0 to n
-	expectedSum := n * (n + 1) / 2
-	// Calculate the actual sum of numbers in the array
-	actualSum := 0
-	for _, num := range nums {
-		actualSum += num
+
+	i := 0
+	for i < n {
+		correctIdx := nums[i]
+		// Only swap if the current number is within the range [0, n-1]
+		if nums[i] < n && nums[i] != nums[correctIdx] {
+			nums[i], nums[correctIdx] = nums[correctIdx], nums[i]
+		} else {
+			i++
+		}
 	}
-	// The missing number is the difference between the expected sum and the actual sum
-	return expectedSum - actualSum
+
+	// After the cyclic sort, find the missing number
+	for i = 0; i < n; i++ {
+		if nums[i] != i {
+			return i
+		}
+	}
+
+	// If all numbers are at their correct positions, the missing number is n
+	return n
 }
 
 func main() {
