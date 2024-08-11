@@ -41,32 +41,30 @@ type Pair struct {
 	i   int // index in nums1
 	j   int // index in nums2
 }
+type MinHeap []Pair
 
-// PriorityQueue implements heap.Interface and holds Pairs
-type PriorityQueue []Pair
-
-func (pq PriorityQueue) Len() int {
-	return len(pq)
+func (h MinHeap) Len() int {
+	return len(h)
 }
 
-func (pq PriorityQueue) Less(i, j int) bool {
-	return pq[i].sum < pq[j].sum
+func (h MinHeap) Less(i, j int) bool {
+	return h[i].sum < h[j].sum
 }
 
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
+func (h MinHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
 }
 
-func (pq *PriorityQueue) Push(x interface{}) {
-	*pq = append(*pq, x.(Pair))
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.(Pair))
 }
 
-func (pq *PriorityQueue) Pop() interface{} {
-	old := *pq
+func (h *MinHeap) Pop() interface{} {
+	old := *h
 	n := len(old)
-	item := old[n-1]
-	*pq = old[0 : n-1]
-	return item
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
 }
 
 func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
@@ -74,24 +72,25 @@ func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
 		return [][]int{}
 	}
 
-	pq := &PriorityQueue{}
-	heap.Init(pq)
+	minHeap := &MinHeap{}
+	heap.Init(minHeap)
 
-	// Initialize the heap with pairs consisting of the first element of nums1 and every element in nums2
+	// Start by pushing the first element of nums1 with each element of nums2
 	for j := 0; j < len(nums2) && j < k; j++ {
-		heap.Push(pq, Pair{sum: nums1[0] + nums2[j], i: 0, j: j})
+		heap.Push(minHeap, Pair{nums1[0] + nums2[j], 0, j})
 	}
 
 	result := [][]int{}
 
-	// Extract the smallest pairs from the heap up to k times
-	for len(result) < k && pq.Len() > 0 {
-		p := heap.Pop(pq).(Pair)
-		result = append(result, []int{nums1[p.i], nums2[p.j]})
+	for k > 0 && minHeap.Len() > 0 {
+		k--
+		smallest := heap.Pop(minHeap).(Pair)
+		i, j := smallest.i, smallest.j
+		result = append(result, []int{nums1[i], nums2[j]})
 
-		// If possible, push the next pair from nums1 with the same element from nums2
-		if p.i+1 < len(nums1) {
-			heap.Push(pq, Pair{sum: nums1[p.i+1] + nums2[p.j], i: p.i + 1, j: p.j})
+		// If possible, push the next element in nums1 with nums2[j]
+		if i+1 < len(nums1) {
+			heap.Push(minHeap, Pair{nums1[i+1] + nums2[j], i + 1, j})
 		}
 	}
 
