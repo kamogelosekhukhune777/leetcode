@@ -31,21 +31,25 @@ Constraints:
 func firstMissingPositive(nums []int) int {
 	n := len(nums)
 
-	// Step 1: Place each number in its correct position if possible
-	for i := 0; i < n; i++ {
-		for nums[i] > 0 && nums[i] <= n && nums[nums[i]-1] != nums[i] {
-			nums[nums[i]-1], nums[i] = nums[i], nums[nums[i]-1]
+	i := 0
+	for i < n {
+		correctIdx := nums[i] - 1
+		// Only swap if nums[i] is in the range [1, n] and not already in the correct position
+		if nums[i] > 0 && nums[i] <= n && nums[i] != nums[correctIdx] {
+			nums[i], nums[correctIdx] = nums[correctIdx], nums[i]
+		} else {
+			i++
 		}
 	}
 
-	// Step 2: Find the first missing positive integer
-	for i := 0; i < n; i++ {
+	// After the cyclic sort, find the first index where the index does not match nums[i]
+	for i = 0; i < n; i++ {
 		if nums[i] != i+1 {
 			return i + 1
 		}
 	}
 
-	// Step 3: If all positions are correctly placed, the missing integer is n+1
+	// If all numbers from 1 to n are in their correct positions, the missing number is n+1
 	return n + 1
 }
 
