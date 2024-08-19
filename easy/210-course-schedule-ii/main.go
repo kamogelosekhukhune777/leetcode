@@ -3,86 +3,100 @@ package main
 import "fmt"
 
 /*
-In an alien language, surprisingly, they also use English lowercase letters, but possibly in a different order. The
-order of the alphabet is some permutation of lowercase letters.
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array
+prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.
 
-Given a sequence of words written in the alien language, and the order of the alphabet, return true if and only if the
-given words are sorted lexicographically in this alien language.
+For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+Return the ordering of courses you should take to finish all courses. If there are many valid answers, return any of
+them. If it is impossible to finish all courses, return an empty array.
 
 
 Example 1:
 
-	Input: words = ["hello","leetcode"], order = "hlabcdefgijkmnopqrstuvwxyz"
-	Output: true
-	Explanation: As 'h' comes before 'l' in this language, then the sequence is sorted.
+	Input: numCourses = 2, prerequisites = [[1,0]]
+	Output: [0,1]
+	Explanation: There are a total of 2 courses to take. To take course 1 you should have finished course 0. So
+		the correct course order is [0,1].
 
 Example 2:
 
-	Input: words = ["word","world","row"], order = "worldabcefghijkmnpqstuvxyz"
-	Output: false
-	Explanation: As 'd' comes after 'l' in this language, then words[0] > words[1], hence the sequence is unsorted.
+	Input: numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+	Output: [0,2,1,3]
+	Explanation: There are a total of 4 courses to take. To take course 3 you should have finished both
+		courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0.
+		So one correct course order is [0,1,2,3]. Another correct ordering is [0,2,1,3].
 
 Example 3:
 
-	Input: words = ["apple","app"], order = "abcdefghijklmnopqrstuvwxyz"
-	Output: false
-	Explanation: The first three characters "app" match, and the second string is shorter (in size.) According
-		to lexicographical rules "apple" > "app", because 'l' > '∅', where '∅' is defined as the blank character
-		which is less than any other character (More info).
+	Input: numCourses = 1, prerequisites = []
+	Output: [0]
 
 
 Constraints:
 
-	1 <= words.length <= 100
-	1 <= words[i].length <= 20
-	order.length == 26
-	All characters in words[i] and order are English lowercase letters.
+	1 <= numCourses <= 2000
+	0 <= prerequisites.length <= numCourses * (numCourses - 1)
+	prerequisites[i].length == 2
+	0 <= ai, bi < numCourses
+	ai != bi
+	All the pairs [ai, bi] are distinct.
 
 */
 
-func isAlienSorted(words []string, order string) bool {
-	// Step 1: Create a mapping from character to its index in the order
-	orderMap := make(map[byte]int)
-	for i := 0; i < len(order); i++ {
-		orderMap[order[i]] = i
+func findOrder(numCourses int, prerequisites [][]int) []int {
+	// Step 1: Initialize the graph and in-degree array
+	graph := make(map[int][]int)
+	inDegree := make([]int, numCourses)
+
+	// Step 2: Build the graph and in-degree array from prerequisites
+	for _, prereq := range prerequisites {
+		course, pre := prereq[0], prereq[1]
+		graph[pre] = append(graph[pre], course)
+		inDegree[course]++
 	}
 
-	// Step 2: Compare each pair of adjacent words
-	for i := 0; i < len(words)-1; i++ {
-		if !inCorrectOrder(words[i], words[i+1], orderMap) {
-			return false
+	// Step 3: Initialize the queue with courses having zero in-degrees
+	queue := []int{}
+	for i := 0; i < numCourses; i++ {
+		if inDegree[i] == 0 {
+			queue = append(queue, i)
 		}
 	}
-	return true
-}
 
-func inCorrectOrder(word1, word2 string, orderMap map[byte]int) bool {
-	minLength := min(len(word1), len(word2))
-	for i := 0; i < minLength; i++ {
-		if word1[i] != word2[i] {
-			return orderMap[word1[i]] < orderMap[word2[i]]
+	// Step 4: Process the queue for topological sorting
+	var topoOrder []int
+	for len(queue) > 0 {
+		node := queue[0]
+		queue = queue[1:]
+		topoOrder = append(topoOrder, node)
+
+		// Decrease the in-degree of neighbors
+		for _, neighbor := range graph[node] {
+			inDegree[neighbor]--
+			if inDegree[neighbor] == 0 {
+				queue = append(queue, neighbor)
+			}
 		}
 	}
-	return len(word1) <= len(word2)
-}
 
-func min(a, b int) int {
-	if a < b {
-		return a
+	// Step 5: Check if topological sort is possible (i.e., no cycles)
+	if len(topoOrder) == numCourses {
+		return topoOrder
 	}
-	return b
+
+	return []int{} // Cycle detected, topological sort not possible
 }
 
 func main() {
-	words1 := []string{"hello", "leetcode"}
-	order1 := "hlabcdefgijkmnopqrstuvwxyz"
-	fmt.Println(isAlienSorted(words1, order1)) // Output: true
+	numCourses1 := 2
+	prerequisites1 := [][]int{{1, 0}}
+	fmt.Println(findOrder(numCourses1, prerequisites1)) // Output: [0, 1]
 
-	words2 := []string{"word", "world", "row"}
-	order2 := "worldabcefghijkmnpqstuvxyz"
-	fmt.Println(isAlienSorted(words2, order2)) // Output: false
+	numCourses2 := 4
+	prerequisites2 := [][]int{{1, 0}, {2, 0}, {3, 1}, {3, 2}}
+	fmt.Println(findOrder(numCourses2, prerequisites2)) // Output: [0, 2, 1, 3] or [0, 1, 2, 3]
 
-	words3 := []string{"apple", "app"}
-	order3 := "abcdefghijklmnopqrstuvwxyz"
-	fmt.Println(isAlienSorted(words3, order3)) // Output: false
+	numCourses3 := 1
+	prerequisites3 := [][]int{}
+	fmt.Println(findOrder(numCourses3, prerequisites3)) // Output: [0]
 }
