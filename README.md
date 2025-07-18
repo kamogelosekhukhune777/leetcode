@@ -1,6 +1,6 @@
 # 🧠 LeetCode Daily Practice
 
-Welcome to my LeetCode solutions repository. This is where I consistently push myself to solve **5 problems a day** and log my progress. Each solution is written in **Go** and **Python**, organized by difficulty.
+Welcome to my LeetCode solutions repository. This is where I consistently push myself to solve **15 problems a week** and log my progress. Each solution is written in **Go** and **Python**, organized by difficulty.
 
 ---
 
