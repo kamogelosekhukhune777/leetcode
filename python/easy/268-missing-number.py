@@ -36,7 +36,7 @@ runtime complexity?
 """
 
 class Solution:
-    def missingNumber(numbers):
+    def missingNumber(nums):
         i = 0 
         n = len(nums)
 
@@ -48,6 +48,6 @@ class Solution:
                 i += 1
             
             for i in range(n):
-                if nums[i] != i
+                if nums[i] != i:
                     return i
         return n
