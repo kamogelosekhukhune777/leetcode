@@ -1,5 +1,6 @@
 """
 41. First Missing Positive
+
 Given an unsorted integer array nums. Return the smallest positive 
 integer that is not present in nums.
 
@@ -29,8 +30,8 @@ Constraints:
 
 class Solution:
     def firstMisingPositive(nums):
-        n := len(nums)
-        i := 0
+        n = len(nums)
+        i = 0
 
         while i < n:
             correct_index = nums[i] - 1
